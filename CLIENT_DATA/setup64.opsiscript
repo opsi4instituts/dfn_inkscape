@@ -1,0 +1,83 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib
+; and published under the Terms of the General Public License.
+; credits: http://www.opsi.org/credits/
+
+[Actions]
+
+; common Values for (un)installation
+include_insert "common.opsiinc"
+
+if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
+	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
+	isFatalError
+	; Stop process and set installation status to failed
+else
+	if FileExists("%ScriptPath%\delsub64.opsiscript")
+		comment "Start uninstall sub section"
+		Sub "%ScriptPath%\delsub64.opsiscript"
+	endif
+
+	if ($INST_SystemType$ = "64 Bit System") and (($INST_architecture$ = "system specific") or ($INST_architecture$ = "both") or ($INST_architecture$ = "64 only"))
+		if not ($MSVersion$ = "6.1")
+			Logwarning "Only tested with windows 7! Please report to the maintainer successful installation on other windows versions."
+		endif
+
+		Message "Installing " + $ProductName$ + " 64 Bit..."
+		comment "Start setup program"
+		Winbatch_install_msi
+		Sub_check_exitcode
+
+		comment "Test for installation success"
+		Set $SearchPattern$ = $ProductName$
+		; Parameter: $SearchPattern$ Suchbegriff in Registry
+		Sub_search_registry64_uninstall_keys
+		; Rückgabewert: $ResultList$ gefundene Einträge
+
+		if ( count ($ResultList$) = "0" )
+			logError "Fatal: After Installation " + $ProductName$ + " could not be found in " + $RegPathUninstall$
+			isFatalError
+		else
+			
+			; Leider setzt das MSI keine 'InstallLocation' bzw. 'DisplayIcon' muss also manuell hier gemacht werden.
+			; Damit es für eine spätere Deinstallation zur Verfügung steht, wird es in die Registry geschrieben
+			comment "Patch missing registry keys like 'InstallLocation' and 'DisplayIcon'"
+			Registry_install /64Bit
+				
+			set $DesktopIcon$ = getProductProperty("desktopicon","no")
+			if $DesktopIcon$ = "yes"
+				comment "Create common desktop icon"
+				Linkfolder_install_desktopicon	
+			endif
+
+			comment "include custom post install file"
+			set $CustomPostInstall$ = getProductProperty("custom-post-install","none")
+			if not ($CustomPostInstall$ = "none")
+				if FileExists("%ScriptPath%\custom\" + $CustomPostInstall$)
+					include_insert "%ScriptPath%\custom\" + $CustomPostInstall$
+				endif
+			endif
+		endif
+	else
+		LogError "At the moment a 32 bit version is not included in this packet!"
+		isFatalError
+	endif
+endif
+
+[Winbatch_install_msi]
+msiexec /qn /i "%ScriptPath%\$InstFile$" /l* "$LogDir$\$ProductId$.install_log.txt" ALLUSERS=1 REBOOT=ReallySuppress
+
+[Registry_install]
+openkey [$RegPathUninstall$\$RegId$]
+set "InstallLocation" = REG_SZ:"$InstallDir$"
+set "DisplayIcon" = REG_SZ:"$PathToExe$"
+
+[Linkfolder_install_desktopicon]
+set_basefolder common_desktopdirectory
+set_subfolder ""
+
+set_link
+ 	name: $ProductName$
+ 	target: $PathToExe$
+end_link
+

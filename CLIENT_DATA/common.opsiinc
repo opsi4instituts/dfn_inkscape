@@ -1,0 +1,42 @@
+requiredWinstVersion >= "4.11.4.3"
+
+DefVar $UninstallProgram$
+DefVar $LogDir$
+DefVar $ProductId$
+DefVar $ProductName$
+DefVar $MinimumSpace$
+DefVar $InstallDir$
+DefVar $InstFile$
+DefVar $PathToExe$
+DefVar $ExitCode$
+DefVar $MSVersion$
+DefVar $RegPathUninstall$
+DefVar $RegId$
+DefVar $INST_architecture$
+DefVar $INST_SystemType$
+DefVar $CustomPostInstall$
+DefVar $CustomPostDeinstall$
+DefVar $DesktopIcon$
+DefVar $SearchPattern$
+DefStringList $ResultList$
+
+Set $INST_SystemType$   = GetSystemType
+Set $INST_architecture$ = GetProductProperty("install_architecture","system specific")
+Set $MSVersion$	    	= GetMsVersionInfo
+Set $LogDir$ = "%opsiLogDir%"
+
+; ---------------------------------------------------------------
+; - Please edit the following values                             -
+; ----------------------------------------------------------------
+Set $ProductId$		= "dfn_inkscape"
+Set $ProductName$       = "Inkscape"
+Set $MinimumSpace$	= "300 MB"
+Set $InstFile$		= "inkscape-0.91-x64_no-desktopicon.msi"
+Set $RegPathUninstall$	= "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
+; MSI setzt leider keine InstallLocation bzw. DisplayIcon, daher manuell definieren und in die Registry schreiben
+Set $InstallDir$ = "%ProgramFiles64Dir%\" + $ProductName$
+Set $PathToExe$ = $InstallDir$ +"\"+ $ProductName$ + ".exe"
+; ----------------------------------------------------------------
+
+include_append "section_sub_check_exitcode.opsiinc"
+include_append "section_sub_search_registry64_uninstall_keys.opsiinc"
