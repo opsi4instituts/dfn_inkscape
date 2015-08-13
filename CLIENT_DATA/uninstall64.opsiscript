@@ -6,6 +6,9 @@
 [Actions]
 include_insert "common.opsiinc"
 
+comment "Show product picture"
+ShowBitmap "%ScriptPath%\" + $ProductName$ + ".png" $ProductName$
+
 Message "Uninstalling " + $ProductName$ + " ..."
 
 if FileExists("%ScriptPath%\delsub64.opsiscript")

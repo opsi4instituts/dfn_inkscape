@@ -20,15 +20,8 @@ if ($INST_SystemType$ = "64 Bit System") and (($INST_architecture$ = "system spe
 		if (count($ResultList$) = "1")
 			Message "Uninstalling " + $ProductName$ + " 64 Bit..."
 			Set $RegId$ = takeSTring(0, $ResultList$)
-			; Old NSIS installer (Version < 2.75) used "Blender" as RegId
-			if $RegId$ = $ProductName$
-				comment "Found old installation (Version < 2.75) with NSIS Installer"
-				Set $UninstallProgram$ = GetRegistryStringValue64("[" + $RegPathUninstall$ + "\" + $RegId$ + "] UninstallString")
-				Winbatch_uninstall
-			else
-				comment "Found blender installed with MSI (Version > 2.75)"
-				Winbatch_uninstall_msi
-			endif
+
+			Winbatch_uninstall_msi
 			sub_check_exitcode
 
 			set $DesktopIcon$ = getProductProperty("desktopicon","no")
@@ -57,10 +50,6 @@ else
 	LogError "At the moment a 32 bit version is not included in this packet!"
 	isFatalError
 endif
-
-[Winbatch_uninstall]
-; === Nullsoft Scriptable Install System ================================================================
-$UninstallProgram$ /S
 
 [Winbatch_uninstall_msi]
 msiexec /x $RegId$ /qn REBOOT=ReallySuppress

@@ -13,6 +13,9 @@ if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
 	isFatalError
 	; Stop process and set installation status to failed
 else
+	comment "Show product picture"
+	ShowBitmap "%ScriptPath%\" + $ProductName$ + ".png" $ProductName$
+	
 	if FileExists("%ScriptPath%\delsub64.opsiscript")
 		comment "Start uninstall sub section"
 		Sub "%ScriptPath%\delsub64.opsiscript"
@@ -38,7 +41,7 @@ else
 			logError "Fatal: After Installation " + $ProductName$ + " could not be found in " + $RegPathUninstall$
 			isFatalError
 		else
-			
+			Set $RegId$ = takeSTring(0, $ResultList$)
 			; Leider setzt das MSI keine 'InstallLocation' bzw. 'DisplayIcon' muss also manuell hier gemacht werden.
 			; Damit es für eine spätere Deinstallation zur Verfügung steht, wird es in die Registry geschrieben
 			comment "Patch missing registry keys like 'InstallLocation' and 'DisplayIcon'"
