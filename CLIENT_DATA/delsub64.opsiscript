@@ -3,61 +3,36 @@
 ; and published under the Terms of the General Public License.
 ; credits: http://www.opsi.org/credits/
 
-if ($INST_SystemType$ = "64 Bit System") and (($INST_architecture$ = "system specific") or ($INST_architecture$ = "both") or ($INST_architecture$ = "64 only"))
-	if not ($MSVersion$ = "6.1")
-		Logwarning "Only tested with windows 7! Please report to the maintainer successful installation on other windows versions."
-	endif
-
-	Message "Searching installation of " + $ProductName$ + " 64 Bit..."
-	Set $SearchPattern$ = $ProductName$
-	; Parameter: $SearchPattern$ Suchbegriff in Registry
-	Sub_search_registry64_uninstall_keys
-	; Rückgabewert: $ResultList$ gefundene Einträge
+Message "Searching installation of " + $ProductName$ + " 64 Bit..."
+Set $SearchPattern$ = $ProductName$
+; Parameter: $SearchPattern$ Suchbegriff in Registry
+Sub_search_registry64_uninstall_keys
+; Rückgabewert: $ResultList$ gefundene Einträge
 	
-	if ( count ($ResultList$) = "0" )
-		comment "No installations of " + $SearchPattern$ + " found in registry. Nothing to do ;-)"
-	else
-		if (count($ResultList$) = "1")
-			Message "Uninstalling " + $ProductName$ + " 64 Bit..."
-			Set $RegId$ = takeSTring(0, $ResultList$)
+if ( count ($ResultList$) = "0" )
+	comment "No installations of " + $SearchPattern$ + " found in registry. Nothing to do ;-)"
+else
+	Message "Uninstalling " + $ProductName$ + " 64 Bit..."
+	Set $RegId$ = takeSTring(0, $ResultList$)
 
-			Winbatch_uninstall_msi
-			sub_check_exitcode
+	Winbatch_uninstall_msi
+	sub_check_exitcode
 
-			set $DesktopIcon$ = getProductProperty("desktopicon","no")
-			if $DesktopIcon$ = "yes"
-				comment "Delete common desktop icon"
-				Linkfolder_uninstall_desktopicon	
-			endif
+	; da DisplayIcon bzw. InstallLocation manuell hinzugefügt wurde, muss der Regkey manuell aufgeräumt werden
+	comment "Cleanup registry"
+	Registry_uninstall /64Bit
 
-			; da DisplayIcon manuell hinzugefügt wurde, muss der Regkey manuell aufgeräumt werden
-			comment "Cleanup registry"
-			Registry_uninstall /64Bit
-
-			comment "include custom post deinstall file"
-			set $CustomPostDeinstall$ = getProductProperty("custom-post-deinstall","none")
-			if not ($CustomPostDeinstall$ = "none")
-				if FileExists("%ScriptPath%\custom\" + $CustomPostDeinstall$)
-					include_insert "%ScriptPath%\custom\" + $CustomPostDeinstall$
-				endif
-			endif
-		else
-			logError "Found more than one installation! This case is not intended yet in this script! Stop now."
-			isFatalError
+	comment "include custom post deinstall file"
+	set $CustomPostDeinstall$ = getProductProperty("custom-post-deinstall","none")
+	if not ($CustomPostDeinstall$ = "none")
+		if FileExists("%ScriptPath%\custom\" + $CustomPostDeinstall$)
+			include_insert "%ScriptPath%\custom\" + $CustomPostDeinstall$
 		endif
 	endif
-else
-	LogError "At the moment a 32 bit version is not included in this packet!"
-	isFatalError
 endif
 
 [Winbatch_uninstall_msi]
-msiexec /x $RegId$ /qn REBOOT=ReallySuppress
+msiexec /x $RegId$ $MsiSilentOption$ REBOOT=ReallySuppress
 
 [Registry_uninstall]
 deletekey [$RegPathUninstall$\$RegId$]
-
-[Linkfolder_uninstall_desktopicon]
-set_basefolder common_desktopdirectory
-set_subfolder ""
-delete_element $ProductName$

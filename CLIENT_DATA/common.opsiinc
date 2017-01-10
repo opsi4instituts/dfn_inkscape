@@ -12,31 +12,44 @@ DefVar $ExitCode$
 DefVar $MSVersion$
 DefVar $RegPathUninstall$
 DefVar $RegId$
-DefVar $INST_architecture$
 DefVar $INST_SystemType$
 DefVar $CustomPostInstall$
 DefVar $CustomPostDeinstall$
 DefVar $DesktopIcon$
 DefVar $SearchPattern$
 DefStringList $ResultList$
+DefVar $ProductVersion$
+DefVar $MsiSilentOption$
+DefVar $ErrorMsg$
+DefVar $DisplayName$
 
 Set $INST_SystemType$   = GetSystemType
-Set $INST_architecture$ = GetProductProperty("install_architecture","system specific")
 Set $MSVersion$	    	= GetMsVersionInfo
 Set $LogDir$ = "%opsiLogDir%"
+
+Set $ProductVersion$	= strPart("%installingProdVersion%", "1", calculate(strPos("%installingProdVersion%","-") + "-" + "1" ))
+Set $MsiSilentOption$ = GetProductProperty("msi-silent-option","/qb!")
 
 ; ---------------------------------------------------------------
 ; - Please edit the following values                             -
 ; ----------------------------------------------------------------
 Set $ProductId$		= "dfn_inkscape"
 Set $ProductName$       = "Inkscape"
-Set $MinimumSpace$	= "300 MB"
-Set $InstFile$		= "inkscape-0.91-x64_no-desktopicon.msi"
+Set $MinimumSpace$	= "350 MB"
+Set $InstFile$		= "Inkscape-" + $ProductVersion$ + ".0-x64.msi"
 Set $RegPathUninstall$	= "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
 ; MSI setzt leider keine InstallLocation bzw. DisplayIcon, daher manuell definieren und in die Registry schreiben
 Set $InstallDir$ = "%ProgramFiles64Dir%\" + $ProductName$
 Set $PathToExe$ = $InstallDir$ +"\"+ $ProductName$ + ".exe"
 ; ----------------------------------------------------------------
 
-include_append "section_sub_check_exitcode.opsiinc"
+include_append "check_msi_exitcode.opsiinc"
 include_append "section_sub_search_registry64_uninstall_keys.opsiinc"
+
+if not ($INST_SystemType$ = "64 Bit System")
+	LogError "There is no 32 bit version included in this packet!"
+	isFatalError
+endif
+if not ($MSVersion$ = "6.1" OR $MSVersion$ = "10.0")
+	Logwarning "Only tested with windows 7 and 10! Please report to the maintainer successful installation on other windows versions."		
+endif

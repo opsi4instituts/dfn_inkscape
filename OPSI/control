@@ -1,5 +1,5 @@
 [Package]
-version: 2
+version: 1
 depends: 
 incremental: False
 
@@ -9,7 +9,7 @@ id: dfn_inkscape
 name: Inkscape
 description: Editor für 2D-Vektorgrafiken im standardisierten SVG-Dateiformat; Import von Bildern und Vektoren, sowie PDF
 advice: 
-version: 0.91
+version: 0.92
 priority: 0
 licenseRequired: False
 productClasses: 
@@ -26,15 +26,6 @@ action: setup
 requiredProduct: dfn_ghostscript
 requiredStatus: installed
 requirementType: before
-
-[ProductProperty]
-type: unicode
-name: install_architecture
-multivalue: True
-editable: False
-description: Betriebssystem-Architektur 32/64 Bit
-values: ["32 only", "64 only", "both", "system specific"]
-default: ["system specific"]
 
 [ProductProperty]
 type: unicode
@@ -63,12 +54,28 @@ description: Define filename for include script in custom directory after deinst
 values: ["none", "post-deinstall.opsiinc"]
 default: ["none"]
 
+[ProductProperty]
+type: unicode
+name: msi-silent-option
+multivalue: False
+editable: False
+description: Un/Install MSI silent (/qb!) or very silent (/qn)
+values: ["/qb!", "/qn"]
+default: ["/qb!"]
+
 [Changelog]
+dfn_inkscape (0.92-1)
+	* o4i-Logo, MSI-Check-Exitcode, ProductProperty MSISilentOption hinzugefügt
+	* Check auf 64-Bit-System bzw. Win-Version nach common.opsiinc
+	* ProductProperty install_architecture entfernt, da nur 64-Bit im Paket
+	* Version aus Paket holen für $InstFile$
+ -- Thomas Besser (archIT/KIT) <thomas.besser@kit.edu>, 09.01.2017
+
 dfn_inkscape (0.91-2)
 	* Copy&Paste-Überbleibsel entfernt ;-)
 	* Bugfix "InstallLocation" bzw. "DisplayIcon" an die richtige Stelle in Registry schreiben
 	* Icon hinzugefügt
--- Thomas Besser (archIT/KIT) <thomas.besser@kit.edu>, 13.08.2015
+ -- Thomas Besser (archIT/KIT) <thomas.besser@kit.edu>, 13.08.2015
 
 dfn_inkscape (0.91-1)
 	* initiales DFN-Paket
