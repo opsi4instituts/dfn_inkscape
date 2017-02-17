@@ -9,7 +9,7 @@ id: dfn_inkscape
 name: Inkscape
 description: Editor für 2D-Vektorgrafiken im standardisierten SVG-Dateiformat; Import von Bildern und Vektoren, sowie PDF
 advice: 
-version: 0.92
+version: 0.92.1
 priority: 0
 licenseRequired: False
 productClasses: 
@@ -64,6 +64,11 @@ values: ["/qb!", "/qn"]
 default: ["/qb!"]
 
 [Changelog]
+dfn_inkscape (0.92.1-1)
+	* neue Upstreamversion (stability and bugfix release)
+	* Minor-Versionsnummer via $InstFile$
+ -- Thomas Besser (archIT/KIT) <thomas.besser@kit.edu>, 17.02.2017
+
 dfn_inkscape (0.92-1)
 	* o4i-Logo, MSI-Check-Exitcode, ProductProperty MSISilentOption hinzugefügt
 	* Check auf 64-Bit-System bzw. Win-Version nach common.opsiinc

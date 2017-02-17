@@ -36,7 +36,7 @@ Set $MsiSilentOption$ = GetProductProperty("msi-silent-option","/qb!")
 Set $ProductId$		= "dfn_inkscape"
 Set $ProductName$       = "Inkscape"
 Set $MinimumSpace$	= "350 MB"
-Set $InstFile$		= "Inkscape-" + $ProductVersion$ + ".0-x64.msi"
+Set $InstFile$		= "Inkscape-" + $ProductVersion$ + "-x64.msi"
 Set $RegPathUninstall$	= "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
 ; MSI setzt leider keine InstallLocation bzw. DisplayIcon, daher manuell definieren und in die Registry schreiben
 Set $InstallDir$ = "%ProgramFiles64Dir%\" + $ProductName$
