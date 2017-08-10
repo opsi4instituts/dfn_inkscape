@@ -15,7 +15,7 @@ DefVar $RegId$
 DefVar $INST_SystemType$
 DefVar $CustomPostInstall$
 DefVar $CustomPostDeinstall$
-DefVar $DesktopIcon$
+DefVar $DesktopLink$
 DefVar $SearchPattern$
 DefStringList $ResultList$
 DefVar $ProductVersion$
@@ -36,7 +36,7 @@ Set $MsiSilentOption$ = GetProductProperty("msi-silent-option","/qb!")
 Set $ProductId$		= "dfn_inkscape"
 Set $ProductName$       = "Inkscape"
 Set $MinimumSpace$	= "350 MB"
-Set $InstFile$		= "Inkscape-" + $ProductVersion$ + "-x64.msi"
+Set $InstFile$		= "inkscape-" + $ProductVersion$ + "-x64.msi"
 Set $RegPathUninstall$	= "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
 ; MSI setzt leider keine InstallLocation bzw. DisplayIcon, daher manuell definieren und in die Registry schreiben
 Set $InstallDir$ = "%ProgramFiles64Dir%\" + $ProductName$
@@ -52,4 +52,13 @@ if not ($INST_SystemType$ = "64 Bit System")
 endif
 if not ($MSVersion$ = "6.1" OR $MSVersion$ = "10.0")
 	Logwarning "Only tested with windows 7 and 10! Please report to the maintainer successful installation on other windows versions."		
+endif
+
+comment "Show product picture"
+if (FileExists("%ScriptPath%\..\lib\icons\%installingProdName%.png"))
+       comment "logo at local library/icons found."
+       ShowBitmap "%ScriptPath%\..\lib\icons\%installingProdName%.png" $ProductName$
+else
+       comment "no logo at local library/icons, use from ScriptPath ..."
+       ShowBitmap "%ScriptPath%\o4i.png" $ProductName$
 endif

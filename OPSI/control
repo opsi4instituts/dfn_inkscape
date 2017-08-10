@@ -9,7 +9,7 @@ id: dfn_inkscape
 name: Inkscape
 description: Editor für 2D-Vektorgrafiken im standardisierten SVG-Dateiformat; Import von Bildern und Vektoren, sowie PDF
 advice: 
-version: 0.92.1
+version: 0.92.2
 priority: 0
 licenseRequired: False
 productClasses: 
@@ -28,13 +28,10 @@ requiredStatus: installed
 requirementType: before
 
 [ProductProperty]
-type: unicode
-name: desktopicon
-multivalue: False
-editable: False
-description: Icon on Desktop
-values: ["no", "yes"]
-default: ["no"]
+type: bool
+name: desktoplink
+description: Link on Desktop?
+default: False
 
 [ProductProperty]
 type: unicode
@@ -64,6 +61,13 @@ values: ["/qb!", "/qn"]
 default: ["/qb!"]
 
 [Changelog]
+dfn_inkscape (0.92.2-1)
+	* neue Upstreamversion (stability and bugfix release)
+	* alte uib Copyrights (Überbleibsel von opsi-template) entfernt
+	* Desktopicon -> Desktoplink gem. o4i-Richtlinie angepasst
+	* o4i-Logo: Anzeigeaufruf nach common.opsiinc ausgelagert, eigenes Logo möglich
+ -- Thomas Besser (archIT/KIT) <thomas.besser@kit.edu>, 17.02.2017
+
 dfn_inkscape (0.92.1-1)
 	* neue Upstreamversion (stability and bugfix release)
 	* Minor-Versionsnummer via $InstFile$

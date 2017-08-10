@@ -1,8 +1,3 @@
-; Copyright (c) uib gmbh (www.uib.de)
-; This sourcecode is owned by uib gmbh
-; and published under the Terms of the General Public License.
-; credits: http://www.opsi.org/credits/
-
 Message "Searching installation of " + $ProductName$ + " 64 Bit..."
 Set $SearchPattern$ = $ProductName$
 ; Parameter: $SearchPattern$ Suchbegriff in Registry
@@ -21,6 +16,10 @@ else
 	; da DisplayIcon bzw. InstallLocation manuell hinzugefügt wurde, muss der Regkey manuell aufgeräumt werden
 	comment "Cleanup registry"
 	Registry_uninstall /64Bit
+
+	; bzgl. $DesktopLink$ gibt es nix zu tun, denn bei...  
+	; True: hat setup64.opsiscript den durch das MSI erstellte nicht gelöscht. MSI macht den auch wieder weg.
+	; False: hat setup64.opsiscript diesen bereits gelöscht.
 
 	comment "include custom post deinstall file"
 	set $CustomPostDeinstall$ = getProductProperty("custom-post-deinstall","none")
