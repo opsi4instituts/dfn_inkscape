@@ -31,7 +31,7 @@ else
 endif
 
 [Winbatch_uninstall_msi]
-msiexec /x $RegId$ $MsiSilentOption$ REBOOT=ReallySuppress
+msiexec /x $RegId$ $SilentOption$ REBOOT=ReallySuppress
 
 [Registry_uninstall]
 deletekey [$RegPathUninstall$\$RegId$]

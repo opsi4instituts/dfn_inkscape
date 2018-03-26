@@ -9,7 +9,7 @@ id: dfn_inkscape
 name: Inkscape
 description: Editor für 2D-Vektorgrafiken im standardisierten SVG-Dateiformat; Import von Bildern und Vektoren, sowie PDF
 advice: 
-version: 0.92.2
+version: 0.92.3
 priority: 0
 licenseRequired: False
 productClasses: 
@@ -29,7 +29,7 @@ requirementType: before
 
 [ProductProperty]
 type: bool
-name: desktoplink
+name: desktop-link
 description: Link on Desktop?
 default: False
 
@@ -53,7 +53,7 @@ default: ["none"]
 
 [ProductProperty]
 type: unicode
-name: msi-silent-option
+name: silent-option
 multivalue: False
 editable: False
 description: Un/Install MSI silent (/qb!) or very silent (/qn)
@@ -61,6 +61,11 @@ values: ["/qb!", "/qn"]
 default: ["/qb!"]
 
 [Changelog]
+dfn_inkscape (0.92.2-1)
+	* neue Upstreamversion (http://wiki.inkscape.org/wiki/index.php/Release_notes/0.92.3)
+	* o4i-Kosmetik (desktoplink -> desktop-link, msi-silent-option -> silent-option)
+ -- Thomas Besser (archIT/KIT) <thomas.besser@kit.edu>, 26.03.2018
+
 dfn_inkscape (0.92.2-1)
 	* neue Upstreamversion (stability and bugfix release)
 	* alte uib Copyrights (Überbleibsel von opsi-template) entfernt

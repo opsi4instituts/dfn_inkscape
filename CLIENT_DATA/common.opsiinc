@@ -19,7 +19,7 @@ DefVar $DesktopLink$
 DefVar $SearchPattern$
 DefStringList $ResultList$
 DefVar $ProductVersion$
-DefVar $MsiSilentOption$
+DefVar $SilentOption$
 DefVar $ErrorMsg$
 DefVar $DisplayName$
 
@@ -27,8 +27,8 @@ Set $INST_SystemType$   = GetSystemType
 Set $MSVersion$	    	= GetMsVersionInfo
 Set $LogDir$ = "%opsiLogDir%"
 
-Set $ProductVersion$	= strPart("%installingProdVersion%", "1", calculate(strPos("%installingProdVersion%","-") + "-" + "1" ))
-Set $MsiSilentOption$ = GetProductProperty("msi-silent-option","/qb!")
+Set $ProductVersion$	= takestring (0, splitString("%installingProdVersion%", "-"))
+Set $SilentOption$ = GetProductProperty("silent-option","/qb!")
 
 ; ---------------------------------------------------------------
 ; - Please edit the following values                             -
@@ -51,7 +51,7 @@ if not ($INST_SystemType$ = "64 Bit System")
 	isFatalError
 endif
 if not ($MSVersion$ = "6.1" OR $MSVersion$ = "10.0")
-	Logwarning "Only tested with windows 7 and 10! Please report to the maintainer successful installation on other windows versions."		
+	Logwarning "Only tested with windows 7 and 10! Please report to the maintainer successful installation on other windows versions."
 endif
 
 comment "Show product picture"
