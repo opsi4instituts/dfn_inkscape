@@ -1,37 +1,47 @@
 Message "Searching installation of " + $ProductName$ + " 64 Bit..."
-Set $SearchPattern$ = $ProductName$
-; Parameter: $SearchPattern$ Suchbegriff in Registry
-Sub_search_registry64_uninstall_keys
-; Rückgabewert: $ResultList$ gefundene Einträge
-	
-if ( count ($ResultList$) = "0" )
-	comment "No installations of " + $SearchPattern$ + " found in registry. Nothing to do ;-)"
-else
-	Message "Uninstalling " + $ProductName$ + " 64 Bit..."
-	Set $RegId$ = takeSTring(0, $ResultList$)
 
-	Winbatch_uninstall_msi
-	sub_check_exitcode
+; Ergebnis ist StringList (mehrere Einträge möglich);
+; in einer Zeile werden drei Ergebnisse mit "|" abgetrennt geliefert: Registrykey (mit Pfad) | Bereich Registry (kann direkt getRegistryValue übergeben werden | DisplayName
+; z.B. HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Test64|64bit|Test Registry Entry64
+Set $ResultList$ = SearchRegistryUninstallKeys($ProductName$)
 
-	; da DisplayIcon bzw. InstallLocation manuell hinzugefügt wurde, muss der Regkey manuell aufgeräumt werden
-	comment "Cleanup registry"
-	Registry_uninstall /64Bit
+Switch count ($ResultList$)
+	Case "0"
+		comment "No installations of " + $ProductName$ + " found in registry. Nothing to do"
+	EndCase
+	Case "1"
+		Set $RegId$ = takeString (0,splitString(takeString(0,$ResultList$), '|'))
+		Message "Uninstalling " + $ProductName$ + " 64 Bit..."
+		
+		; für MSI wird nur der eigentliche Regkey (ohne Pfad) benötigt
+		Set $RegId$ = takeString (-1,splitString($RegId$,"\"))
+		Winbatch_uninstall_msi
+		Set $ExitCode$ = getLastExitCode
+		if stringToBool(isMsiExitcodeFatal($ExitCode$, "True", $ErrorString$))		
+			isFatalError
+		endif	
+		
+		Set $RegId$ = takeString (0,splitString(takeString(0,$ResultList$), '|'))
+		; da DisplayIcon bzw. InstallLocation manuell hinzugefügt wurde, muss der Regkey manuell aufgeräumt werden
+		comment "Cleanup registry"
+		Registry_uninstall /64Bit
 
-	; bzgl. $DesktopLink$ gibt es nix zu tun, denn bei...  
-	; True: hat setup64.opsiscript den durch das MSI erstellte nicht gelöscht. MSI macht den auch wieder weg.
-	; False: hat setup64.opsiscript diesen bereits gelöscht.
-
-	comment "include custom post deinstall file"
-	set $CustomPostDeinstall$ = getProductProperty("custom-post-deinstall","none")
-	if not ($CustomPostDeinstall$ = "none")
-		if FileExists("%ScriptPath%\custom\" + $CustomPostDeinstall$)
-			include_insert "%ScriptPath%\custom\" + $CustomPostDeinstall$
+		comment "include custom post deinstall file"
+		set $CustomPostDeinstall$ = getProductProperty("custom-post-deinstall","none")
+		if not ($CustomPostDeinstall$ = "none")
+			if FileExists("%ScriptPath%\custom\" + $CustomPostDeinstall$)
+				include_insert "%ScriptPath%\custom\" + $CustomPostDeinstall$
+			endif
 		endif
-	endif
-endif
+	EndCase
+	DefaultCase
+		logError "Found more than one installation! This case is not intended yet in this script! Stop now."
+		isFatalError
+	EndCase
+EndSwitch   
 
 [Winbatch_uninstall_msi]
 msiexec /x $RegId$ $SilentOption$ REBOOT=ReallySuppress
 
 [Registry_uninstall]
-deletekey [$RegPathUninstall$\$RegId$]
+deletekey [$RegId$]

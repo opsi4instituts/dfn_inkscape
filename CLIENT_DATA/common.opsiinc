@@ -1,27 +1,27 @@
-requiredWinstVersion >= "4.11.4.3"
+requiredWinstVersion >= "4.12.0.16"
 
-DefVar $UninstallProgram$
 DefVar $LogDir$
 DefVar $ProductId$
-DefVar $ProductName$
 DefVar $MinimumSpace$
 DefVar $InstallDir$
 DefVar $InstFile$
-DefVar $PathToExe$
 DefVar $ExitCode$
-DefVar $MSVersion$
-DefVar $RegPathUninstall$
-DefVar $RegId$
-DefVar $INST_SystemType$
+DefVar $ErrorString$
 DefVar $CustomPostInstall$
 DefVar $CustomPostDeinstall$
 DefVar $DesktopLink$
-DefVar $SearchPattern$
-DefStringList $ResultList$
+DefVar $ProductName$
+DefVar $PathToExe$
 DefVar $ProductVersion$
+DefVar $InstalledVersion$
+DefVar $INST_SystemType$
+DefVar $MSVersion$
+DefVar $RegId$
+DefVar $RegBitScope$
+DefVar $RegDisplayName$
 DefVar $SilentOption$
-DefVar $ErrorMsg$
-DefVar $DisplayName$
+DefStringlist $ResultList$
+
 
 Set $INST_SystemType$   = GetSystemType
 Set $MSVersion$	    	= GetMsVersionInfo
@@ -37,14 +37,15 @@ Set $ProductId$		= "dfn_inkscape"
 Set $ProductName$       = "Inkscape"
 Set $MinimumSpace$	= "350 MB"
 Set $InstFile$		= "inkscape-" + $ProductVersion$ + "-x64.msi"
-Set $RegPathUninstall$	= "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
 ; MSI setzt leider keine InstallLocation bzw. DisplayIcon, daher manuell definieren und in die Registry schreiben
 Set $InstallDir$ = "%ProgramFiles64Dir%\" + $ProductName$
 Set $PathToExe$ = $InstallDir$ +"\"+ $ProductName$ + ".exe"
 ; ----------------------------------------------------------------
 
-include_append "check_msi_exitcode.opsiinc"
-include_append "section_sub_search_registry64_uninstall_keys.opsiinc"
+; exitcode library von UIB (siehe C:\program files(x86)\opsi.org\opsi-client-agent\opsi-winst\lib) mit 'local functions'
+importLib "uib_exitcode.opsiscript::isMsiExitcodeFatal"
+; Library registry search uninstall keys (local functions)
+importLib "func_search_registry_uninstall_keys.opsiinc"
 
 if not ($INST_SystemType$ = "64 Bit System")
 	LogError "There is no 32 bit version included in this packet!"

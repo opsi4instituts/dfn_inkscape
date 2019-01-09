@@ -1,4 +1,5 @@
 *.opsi
+*.zsync
 *.bak
 *.msi
 *.md5
