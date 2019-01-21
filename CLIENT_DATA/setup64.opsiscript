@@ -28,7 +28,7 @@ else
 	Set $ResultList$ = SearchRegistryUninstallKeys($ProductName$)
 
 	if ( count ($ResultList$) = "0" )
-		logError "Fatal: After Installation " + $ProductName$ + " could not be found in " + $RegPathUninstall$
+		logError "Fatal: After Installation " + $ProductName$ + " could not be found in registry"
 		isFatalError
 	else
 		Set $RegId$ = takeString (0,splitString(takeString(0,$ResultList$), '|'))

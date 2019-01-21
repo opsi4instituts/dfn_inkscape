@@ -1,5 +1,5 @@
 [Package]
-version: 2
+version: 1
 depends: 
 
 [Product]
@@ -8,7 +8,7 @@ id: dfn_inkscape
 name: Inkscape
 description: Editor für 2D-Vektorgrafiken im standardisierten SVG-Dateiformat; Import von Bildern und Vektoren, sowie PDF
 advice: 
-version: 0.92.3
+version: 0.92.4
 priority: 0
 licenseRequired: False
 productClasses: 
@@ -60,6 +60,10 @@ values: ["/qb!", "/qn"]
 default: ["/qb!"]
 
 [Changelog]
+dfn_inkscape (0.92.4-1)
+	* neue Upstreamversion (http://wiki.inkscape.org/wiki/index.php/Release_notes/0.92.4)
+ -- Thomas Besser (archIT/KIT) <thomas.besser@kit.edu>, 21.01.2019
+
 dfn_inkscape (0.92.3-2)
 	* neues o4i-Logo
 	* neue Registrysuche (https://github.com/opsi4instituts/lib, winst-Version 4.12.0.16 Voraussetzung)
